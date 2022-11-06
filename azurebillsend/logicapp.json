@@ -1,0 +1,132 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Parse_JSON": {
+                "inputs": {
+                    "content": "@triggerBody()",
+                    "schema": {
+                        "application": "application",
+                        "attachment": "attachment",
+                        "bar_graph_image": "bar_graph_base64_message",
+                        "barh_graph_image": "barh_graph_base64_message",
+                        "blob_name": "blob_name",
+                        "business_unit": "business_unit",
+                        "contact": "contact",
+                        "department": "department",
+                        "pie_graph_image": "pie_graph_base64_message",
+                        "price_difference": "price_difference",
+                        "project_code": "project_code",
+                        "project_manager": "project_manager",
+                        "rate": "rate",
+                        "subscription_name": "subscription_name"
+                    }
+                },
+                "runAfter": {},
+                "type": "ParseJson"
+            },
+            "Send_an_email_(V2)": {
+                "inputs": {
+                    "body": {
+                        "Attachments": [
+                            {
+                                "ContentBytes": "@{base64(triggerBody()?['attachment'])}",
+                                "Name": "@triggerBody()?['blob_name']"
+                            }
+                        ],
+                        "Body": "<p>Azure monthly bill for \"@{triggerBody()?['blob_name']}\" has been generated successfully.<br>\nPlease see the attachment for the detailed billing report.<br>\n<span style=\"background-color: rgb(65,168,95)\"><strong>@{triggerBody()?['price_difference']}</strong></span><br>\n<br>\n</p><ul>\n  <li>Applied Cenitex Service Fee: @{triggerBody()?['rate']}</li>\n  <li>Department: @{triggerBody()?['department']}</li>\n  <li>Customer Contact: @{triggerBody()?['contact']}</li>\n  <li>Business Unit: @{triggerBody()?['business_unit']}</li>\n  <li>Hosted Application: @{triggerBody()?['application']}</li>\n  <li>Project Code: @{triggerBody()?['project_code']}</li>\n  <li>Project Manager: @{triggerBody()?['project_manager']}<br>\n<br>\n<img src=data:image/jpeg;base64,@{triggerBody()?['bar_graph_image']}><br>\n<img src=data:image/jpeg;base64,@{triggerBody()?['barh_graph_image']}><br>\n<img src=data:image/jpeg;base64,@{triggerBody()?['pie_graph_image']}><br>\n<br>\nRegards,<br>\n<br>\nThank you.</li>\n</ul>",
+                        "Subject": "Azure monthly Bill for @{triggerBody()?['blob_name']}",
+                        "To": "john.lee@cenitex.vic.gov.au;"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['office365']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/v2/Mail"
+                },
+                "runAfter": {
+                    "Parse_JSON": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "manual": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "application": {
+                                "type": "string"
+                            },
+                            "attachment": {
+                                "type": "string"
+                            },
+                            "bar_graph_image": {
+                                "type": "string"
+                            },
+                            "barh_graph_image": {
+                                "type": "string"
+                            },
+                            "blob_name": {
+                                "type": "string"
+                            },
+                            "business_unit": {
+                                "type": "string"
+                            },
+                            "contact": {
+                                "type": "string"
+                            },
+                            "department": {
+                                "type": "string"
+                            },
+                            "pie_graph_image": {
+                                "type": "string"
+                            },
+                            "price_difference": {
+                                "type": "string"
+                            },
+                            "project_code": {
+                                "type": "string"
+                            },
+                            "project_manager": {
+                                "type": "string"
+                            },
+                            "rate": {
+                                "type": "string"
+                            },
+                            "subscription_name": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "office365": {
+                    "connectionId": "",
+                    "connectionName": "office365",
+                    "id": ""
+                }
+            }
+        }
+    }
+}
