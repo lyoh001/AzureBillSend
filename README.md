@@ -20,7 +20,7 @@ Included in this report is a step by step detailed guide around where to look fo
 5. Reads a billing rate table to apply the business logic during csv generation process.
 6. Makes RESTAPI call to retrieve the payload. 
 7. azurebillfuncapp generates raw data csv for finance team to consume and uploads to blob container.
-8. azurebillfuncapp generates separate billing reports per subscription and adds CTX service premium fee and uploads to blob container.
+8. azurebillfuncapp generates separate billing reports per subscription and adds CTX service premium fees and uploads to blob container.
 9. Eventgrid will pick up events on the blob container and will invoke azurebillsendfuncapp which will read each reports and generates bar and pie charts and attachments and sends them via email to GMs.
 
 
